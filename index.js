@@ -52,6 +52,22 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/allContacts', async (req, res) => {
+            let query = {}
+            if (req.query?.email) {
+                query = { email: req.query?.email }
+            }
+            const result = await contactsCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        app.delete('/allContacts/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await contactsCollection.deleteOne(query)
+            res.send(result)
+        })
+
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
