@@ -68,6 +68,54 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/updateContact/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await contactsCollection.findOne(query)
+            res.send(result)
+        })
+
+        app.put('/updateContact/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateContact = req.body
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    name: updateContact.name,
+                    contact_email: updateContact.contact_email,
+                    phone: updateContact.phone,
+                    address: updateContact.address,
+                    image: updateContact.image
+                }
+            }
+            console.log(updateDoc);
+            const result = await contactsCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
+        app.put('/markFavorite', async (req, res) => {
+            const filter = { _id: new ObjectId(req.query.id) }
+            const updatedDoc = {
+                $set: {
+                    status: "favorite"
+                }
+            }
+            const result = await contactsCollection.updateOne(filter, updatedDoc)
+            res.send(result)
+        })
+
+        app.put('/markFavorite/remove', async (req, res) => {
+            const filter = { _id: new ObjectId(req.query.id) }
+            const updatedDoc = {
+                $set: {
+                    status: "general"
+                }
+            }
+            const result = await contactsCollection.updateOne(filter, updatedDoc)
+            res.send(result)
+        })
+
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
